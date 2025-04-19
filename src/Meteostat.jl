@@ -34,6 +34,7 @@ include("interface/stations.jl")
 include("interface/timeseries.jl")
 
 export Point, get_stations, get_weather_data
+export fetch
 
 # greet() = print("Hello World!")
 

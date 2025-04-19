@@ -16,4 +16,8 @@ end
     alt::Union{Float64, Nothing} = nothing
 end
 
-Point(lat, lon) = Point(lat=lat, lon=lon)
+Point(lat, lon) = Point(lat = convert(Float64, lat), lon = convert(Float64, lon))
+function Point(lat, lon, alt)
+    Point(lat = convert(Float64, lat), lon = convert(Float64, lon),
+        alt = convert(Float64, alt))
+end
