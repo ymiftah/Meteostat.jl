@@ -67,12 +67,14 @@ function get_weather_data(station::String, granularity::Type{T};
 end
 
 function fetch(point::Point, granularity::Type{T};
-        year::Union{Int, Nothing} = nothing) where {T <: Dates.Period}
+        year::Union{Int, Nothing} = nothing,
+        ) where {T <: Dates.Period}
     stations = get_stations(point, granularity)
     # get the nearest
-    station = first(stations.id)
-    @debug "Reading data for station_id $station"
-    get_weather_data(station, granularity; year = year)
+    station = first(stations)
+    id, name, distance = station |> x -> (x.id, x.name, x.distance)
+    @info "Reading data for station $name $id, at distance $distance"
+    get_weather_data(id, granularity; year = year)
 end
 
 function fetch(
