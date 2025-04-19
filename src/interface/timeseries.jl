@@ -45,6 +45,8 @@ function get_schema(::Type{Dates.Month})
 end
 
 """
+    get_weather_data(station::String, granularity::Type{T}
+
 Reads weather data for a given station
 """
 function get_weather_data(station::String, granularity::Type{T};
@@ -66,9 +68,16 @@ function get_weather_data(station::String, granularity::Type{T};
     return df
 end
 
-function fetch(point::Point, granularity::Type{T};
+"""
+    fetch_data(point::Point, granularity::Type{T};
         year::Union{Int, Nothing} = nothing,
         ) where {T <: Dates.Period}
+
+fetch_dataes weather data for a given point and requested granularity
+"""
+function fetch_data(point::Point, granularity::Type{T};
+        year::Union{Int, Nothing} = nothing
+) where {T <: Dates.Period}
     stations = get_stations(point, granularity)
     # get the nearest
     station = first(stations)
@@ -77,19 +86,33 @@ function fetch(point::Point, granularity::Type{T};
     get_weather_data(id, granularity; year = year)
 end
 
-function fetch(
+"""
+    fetch_data(
         point::Point, start_date::Dates.Date, end_date::Dates.Date, granularity::Type{T},
         year::Union{Int, Nothing} = nothing) where {T <: Dates.Period}
-    data = fetch(point, granularity; year = year)
+
+fetch_dataes weather data for a given date range
+"""
+function fetch_data(
+        point::Point, granularity::Type{T}, start_date::Dates.Date, end_date::Dates.Date,
+        year::Union{Int, Nothing} = nothing) where {T <: Dates.Period}
+    data = fetch_data(point, granularity; year = year)
     filter_time!(data, start_date, end_date)
 end
 
-function fetch(point::Point, granularity::Type{Dates.Hour},
+"""
+    fetch_data(
+        point::Point, start_date::Dates.Date, end_date::Dates.Date, granularity::Type{T},
+        year::Union{Int, Nothing} = nothing) where {T <: Dates.Period}
+
+fetch_dataes hourly weather data for a given date range
+"""
+function fetch_data(point::Point, granularity::Type{Dates.Hour},
         start_date::Dates.Date, end_date::Dates.Date)
     dr = start_date:Day(1):end_date
     years = unique(year.(dr))
     data = vcat((
-        fetch(point, granularity; year = year)
+        fetch_data(point, granularity; year = year)
     for year in years
     )...)
     filter_time!(data, start_date, end_date)

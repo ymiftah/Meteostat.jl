@@ -101,9 +101,9 @@ function adjust_temp(table, altitude)
     adjust_transform(x) = x + (altitude * temp_diff)
 
     # Adjust values for all temperature-like data
-    columns = Dict(col => adjust_transform for col in temp_like if col ∈ Tables.columnnames(table))
+    columns = intersect(names(table) .|> Symbol, temp_like)
     if length(columns) > 0
-        table = TableOperations.transform(table, columns) |> Tables.columntable
+        transform!(table, [col => ByRow(adjust_transform) => col for col in columns]...)
     end
     return table
 end

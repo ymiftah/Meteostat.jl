@@ -10,12 +10,8 @@
     # threads:: Int = 1
 end
 
-@kwdef struct Point
-    lat::Float64
-    lon::Float64
-    alt::Union{Float64, Nothing} = nothing
+struct Point{T<:Real}
+    lat::T
+    lon::T
+    alt::Union{T, Nothing}
 end
-
-Point(lat, lon) = Point(lat = convert(Float64, lat), lon = convert(Float64, lon))
-Point(lat, lon, alt) = Point(lat = convert(Float64, lat), lon = convert(Float64, lon),
-        alt = convert(Float64, alt))

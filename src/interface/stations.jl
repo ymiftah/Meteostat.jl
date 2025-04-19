@@ -102,7 +102,6 @@ Filter weather stations by country/region code
 """
 function filter_region!(stations; country::Union{String, Nothing} = nothing,
         state::Union{String, Nothing} = nothing)
-    # stations = copy(stations)
     if !isnothing(country)
         subset!(stations, :country => ByRow(==(country)))
     end
