@@ -13,5 +13,7 @@ end
 struct Point{T<:Real}
     lat::T
     lon::T
-    alt::Union{T, Nothing}
+    alt::Union{T,Nothing}
 end
+
+Point(lat::Real, lon::Real) = Point(lat, lon, nothing)

@@ -17,9 +17,8 @@ using HTTP
 using Downloads
 using DataFrames
 using OrderedCollections: OrderedDict
-import CSV
-import Statistics:mean
-
+using CSV: CSV
+import Statistics: mean
 
 const CACHE_PATH = joinpath(tempdir(), ".meteostat", "cache")
 
@@ -33,6 +32,5 @@ include("interface/timeseries.jl")
 export Point, get_stations, get_weather_data
 export fetch_data
 
-# greet() = print("Hello World!")
 
 end # module Meteostat

@@ -6,9 +6,8 @@ const GRANULARITY_MAP = Dict(
     Dates.Hour => "hourly",
     Dates.Day => "daily",
     Dates.Month => "monthly",
-    nothing => "normals"
+    nothing => "normals",
 )
-
 
 """
     generate_endpoint_path(
@@ -25,7 +24,7 @@ function generate_endpoint_path(
     granularity::Type{T}=Nothing,
     year::Union{Int,Nothing}=nothing,
     map_file::Bool=false,  # Is a source map file?
-)::String where {T<:Union{Dates.Period, Nothing}}
+)::String where {T<:Union{Dates.Period,Nothing}}
 
     # Base path
     mapped_granularity = get(GRANULARITY_MAP, granularity, "normals")
@@ -41,14 +40,10 @@ function generate_endpoint_path(
     return "$(path)$(station)$(appendix).csv.gz"
 end
 
-
 """
 Reads file from local cache, or downloads from a Meteostat endpoint
 """
-function load_handler(
-    endpoint::String,
-    path_suffix::String,
-)
+function load_handler(endpoint::String, path_suffix::String)
     path = joinpath(CACHE_PATH, path_suffix)
     if isfile(path)
         @info "Reading local file $path"
@@ -60,13 +55,6 @@ function load_handler(
     end
     return path
 end
-
-
-
-
-
-
-
 
 """
 Calculate distance between weather station and geo point
@@ -83,7 +71,7 @@ function get_distance(lat1, lon1, lat2, lon2)
     dlon = lon2 - lon1
 
     # Calculate distance
-    arch = sin(dlat / 2) ^ 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ^ 2
+    arch = sin(dlat / 2)^2 + cos(lat1) * cos(lat2) * sin(dlon / 2)^2
     arch_sin = 2 * asin(sqrt(arch))
 
     return radius * arch_sin
@@ -92,18 +80,24 @@ end
 """
 Adjust temperature-like columns for altitude
 """
-function adjust_temp(table, altitude)
+function adjust_temp!(table, altitude, elevation)
     # Default temperature difference by 100 meters
     temp_diff = 0.6
 
+    if isnothing(altitude)
+        altitude = elevation
+    end
+
     # Temperature-like columns
-    temp_like = map(Symbol, ("temp", "dwpt", "tavg", "tmin", "tmax"))
-    adjust_transform(x) = x + (altitude * temp_diff)
+    temp_like = ("temp", "dwpt", "tavg", "tmin", "tmax")
+    adjust_transform(x) = x + (elevation - altitude) * temp_diff / 100
 
     # Adjust values for all temperature-like data
-    columns = intersect(names(table) .|> Symbol, temp_like)
+    columns = intersect(names(table), temp_like)
     if length(columns) > 0
-        transform!(table, [col => ByRow(adjust_transform) => col for col in columns]...)
+        for col in columns
+            transform!(table, col => ByRow(adjust_transform) => col)
+        end
     end
     return table
 end
@@ -112,7 +106,7 @@ end
 Filter a table by date range
 """
 function filter_time!(table, start_date, end_date)
-    subset!(table, :time => ByRow(<=(end_date)), :time => ByRow(>=(start_date)))
+    return subset!(table, :time => ByRow(<=(end_date)), :time => ByRow(>=(start_date)))
 end
 
 """
@@ -127,21 +121,25 @@ function degree_mean(series)
 end
 
 function _add_time_column!(table, ::Type{Dates.Hour})
-    transform!(table, [:date, :hour] => ByRow((date, hour) -> Dates.DateTime(date, Dates.Time(hour))) => :time)
+    transform!(
+        table,
+        [:date, :hour] =>
+            ByRow((date, hour) -> Dates.DateTime(date, Dates.Time(hour))) => :time,
+    )
     select!(table, Not([:date, :hour]))
     select!(table, :time, Not(:time))
     return table
 end
-
 
 function _add_time_column!(table, ::Type{Dates.Day})
     rename!(table, Dict(:date => :time))
     return table
 end
 
-
 function _add_time_column!(table, ::Type{Dates.Month})
-    transform!(table, [:year, :month] => ByRow((year, month) -> Dates.Date(year, month)) => :time)
+    transform!(
+        table, [:year, :month] => ByRow((year, month) -> Dates.Date(year, month)) => :time
+    )
     select!(table, Not([:year, :month]))
     select!(table, :time, Not(:time))
     return table

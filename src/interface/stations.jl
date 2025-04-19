@@ -25,18 +25,18 @@ function get_stations()
     path = load_handler(endpoint, "stations.csv.gz")
     df = CSV.read(
         path,
-        DataFrame,
+        DataFrame;
         header=collect(keys(STATIONS_SCHEMA)),
         types=collect(values(STATIONS_SCHEMA)),
-        dateformat = "yyyy-mm-dd",
-        )
+        dateformat="yyyy-mm-dd",
+    )
     return df
 end
 
 """
 Reads all stations within radius distance of the point
 """
-function get_stations(point::Point; radius::Union{Float64, Nothing} = 35_000.)
+function get_stations(point::Point; radius::Union{Float64,Nothing}=35_000.0)
     lat = point.lat
     lon = point.lon
     alt = point.alt
@@ -46,16 +46,18 @@ function get_stations(point::Point; radius::Union{Float64, Nothing} = 35_000.)
     return stations
 end
 
-function get_stations(lat, lon; radius::Union{Float64, Nothing} = 35_000.)
-    point = Point(lat=lat, lon=lon)
-    stations = get_stations(point;radius=radius)
+function get_stations(lat, lon; radius::Union{Float64,Nothing}=35_000.0)
+    point = Point(; lat=lat, lon=lon)
+    stations = get_stations(point; radius=radius)
     return stations
 end
 
 """
 Reads all stations within radius distance of the point and where data is available for the requested granularity
 """
-function get_stations(point::Point, granularity::Type{T}; radius::Union{Float64, Nothing} = 35_000.) where {T<:Dates.Period}
+function get_stations(
+    point::Point, granularity::Type{T}; radius::Union{Float64,Nothing}=35_000.0
+) where {T<:Dates.Period}
     stations = get_stations(point; radius=radius)
     filter_inventory!(stations, granularity)
     score_values!(stations; radius=radius, alt=point.alt)
@@ -65,26 +67,32 @@ end
 """
 Reads all stations within radius distance of the point and where data is available for the requested granularity and dates
 """
-function get_stations(point::Point, granularity::Type{T}, start_date::Dates.Date, end_date::Dates.Date; radius::Union{Float64, Nothing} = 35_000.) where {T<:Dates.Period}
+function get_stations(
+    point::Point,
+    granularity::Type{T},
+    start_date::Dates.Date,
+    end_date::Dates.Date;
+    radius::Union{Float64,Nothing}=35_000.0,
+) where {T<:Dates.Period}
     stations = get_stations(point; radius=radius)
     filter_inventory!(stations, granularity, (start_date, end_date))
     score_values!(stations; radius=radius, alt=point.alt)
     return stations
 end
 
-
 # Filters
-
-
 
 """
 Sort/filter weather stations by physical distance
 """
 function filter_nearby!(
-        stations, lat::Float64, lon::Float64; radius::Union{Float64, Nothing} = nothing)
+    stations, lat::Float64, lon::Float64; radius::Union{Float64,Nothing}=nothing
+)
     dropmissing!(stations, [:latitude, :longitude])
-    transform!(stations,
-        [:latitude, :longitude] => ByRow((x, y) -> get_distance(x, y, lat, lon)) => :distance
+    transform!(
+        stations,
+        [:latitude, :longitude] =>
+            ByRow((x, y) -> get_distance(x, y, lat, lon)) => :distance,
     )
     if !isnothing(radius)
         subset!(stations, :distance => ByRow(<=(radius)))
@@ -100,8 +108,9 @@ end
 """
 Filter weather stations by country/region code
 """
-function filter_region!(stations; country::Union{String, Nothing} = nothing,
-        state::Union{String, Nothing} = nothing)
+function filter_region!(
+    stations; country::Union{String,Nothing}=nothing, state::Union{String,Nothing}=nothing
+)
     if !isnothing(country)
         subset!(stations, :country => ByRow(==(country)))
     end
@@ -119,14 +128,16 @@ end
 Filter weather stations by geographical bounds
 """
 function filter_bounds!(
-        stations, top_left::Tuple{Float64, Float64}, bottom_right::Tuple{Float64, Float64})
+    stations, top_left::Tuple{Float64,Float64}, bottom_right::Tuple{Float64,Float64}
+)
     # Return stations in boundaries
     dropmissing!(stations, [:latitude, :longitude])
-    subset!(stations,
+    subset!(
+        stations,
         :latitude => ByRow(<=(top_left[1])),
         :latitude => ByRow(>=(bottom_right[1])),
         :longitude => ByRow(>=(top_left[2])),
-        :longitude => ByRow(<=(bottom_right[2]))
+        :longitude => ByRow(<=(bottom_right[2])),
     )
     if nrow(stations) == 0
         @warn "No weather stations found within bounds"
@@ -138,9 +149,8 @@ end
 Filter weather stations by inventory data
 """
 function filter_inventory!(
-        stations,
-        granularity::Type{T}
-) where {T <: Union{Dates.Period, Nothing}}
+    stations, granularity::Type{T}
+) where {T<:Union{Dates.Period,Nothing}}
     freq = Symbol(GRANULARITY_MAP[granularity] * "_start")
     dropmissing!(stations, freq)
     if nrow(stations) == 0
@@ -152,18 +162,13 @@ end
 Filter weather stations by inventory data between two dates
 """
 function filter_inventory!(
-        stations,
-        granularity::Type{T},
-        period::Tuple{Dates.Date, Dates.Date}
-) where {T <: Union{Dates.Period, Nothing}}
+    stations, granularity::Type{T}, period::Tuple{Dates.Date,Dates.Date}
+) where {T<:Union{Dates.Period,Nothing}}
     freq = GRANULARITY_MAP[granularity]
     freq_start = Symbol(freq * "_start")
     freq_end = Symbol(freq * "_end")
     dropmissing!(stations, freq_start)
-    subset!(stations,
-        freq_start => ByRow(<=(period[1])),
-        freq_end => ByRow(>=(period[2]))
-    )
+    subset!(stations, freq_start => ByRow(<=(period[1])), freq_end => ByRow(>=(period[2])))
     if nrow(stations) == 0
         @warn "No weather stations found with requested granularity and time window"
     end
@@ -174,18 +179,13 @@ end
 Filter weather stations by inventory data for a given day
 """
 function filter_inventory!(
-        stations,
-        granularity::Type{T},
-        date::Dates.Date
-) where {T <: Union{Dates.Period, Nothing}}
+    stations, granularity::Type{T}, date::Dates.Date
+) where {T<:Union{Dates.Period,Nothing}}
     freq = GRANULARITY_MAP[granularity]
     freq_start = Symbol(freq * "_start")
     freq_end = Symbol(freq * "_end")
     dropmissing!(stations, freq_start)
-    subset!(stations,
-        freq_start => ByRow(<=(date)),
-        freq_end => ByRow(>=(date))
-    )
+    subset!(stations, freq_start => ByRow(<=(date)), freq_end => ByRow(>=(date)))
     if nrow(stations) == 0
         @warn "No weather stations found with requested granularity and date"
     end
@@ -196,7 +196,8 @@ end
 Filter weather stations by altitude
 """
 function filter_altitude!(
-        stations; alt::Union{Float64, Nothing} = nothing, alt_range::Float64 = 350.0)
+    stations; alt::Union{Float64,Nothing}=nothing, alt_range::Float64=350.0
+)
     if !isnothing(alt)
         subset!(stations, :elevation => ByRow(x -> abs(x - alt) <= alt_range))
     end
@@ -210,24 +211,26 @@ end
 Score weather stations
 """
 function score_values!(
-        stations; radius::Float64 = 35_000.0, alt::Union{Float64, Nothing} = nothing,
-        alt_range::Float64 = 350.0, weight_dist::Float64 = 0.6, weight_alt::Float64 = 0.4)
+    stations;
+    radius::Float64=35_000.0,
+    alt::Union{Float64,Nothing}=nothing,
+    alt_range::Float64=350.0,
+    weight_dist::Float64=0.6,
+    weight_alt::Float64=0.4,
+)
     if isnothing(alt)
         alt = mean(first(stations, 5).elevation)
     end
 
-    transform!(stations,
-        [:distance, :elevation]
-        => ByRow(
-        (distance, elevation) -> (
-        (1 - (distance / radius)) * weight_dist
-    ) + (
-        (1 - (abs(alt - elevation) / alt_range))
-        * weight_alt
+    transform!(
+        stations,
+        [:distance, :elevation] =>
+            ByRow(
+                (distance, elevation) ->
+                    ((1 - (distance / radius)) * weight_dist) +
+                    ((1 - (abs(alt - elevation) / alt_range)) * weight_alt),
+            ) => :score,
     )
-    )
-        => :score
-    )
-    sort!(stations, :score, rev=true)
+    sort!(stations, :score; rev=true)
     return stations
 end
