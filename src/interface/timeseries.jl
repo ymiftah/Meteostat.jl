@@ -82,7 +82,7 @@ end
 function fetch(point::Point, granularity::Type{Dates.Hour}, start_date::Dates.Date, end_date::Dates.Date)
     dr = start_date:Day(1):end_date
     years = unique(year.(dr))
-    data = vcat(collect(
+    data = vcat((
         fetch(point, granularity; year=year)
         for year in years
     )...)
