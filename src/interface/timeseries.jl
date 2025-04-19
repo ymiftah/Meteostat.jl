@@ -76,5 +76,15 @@ end
 
 function fetch(point::Point, start_date::Dates.Date, end_date::Dates.Date, granularity::Type{T}, year::Union{Int,Nothing}=nothing) where {T<:Dates.Period}
     data = fetch(point, granularity; year=year)
-    filter_time(data, start_date, end_date)
+    filter_time!(data, start_date, end_date)
+end
+
+function fetch(point::Point, granularity::Type{Dates.Hour}, start_date::Dates.Date, end_date::Dates.Date)
+    dr = start_date:Day(1):end_date
+    years = unique(year.(dr))
+    data = vcat(collect(
+        fetch(point, granularity; year=year)
+        for year in years
+    )...)
+    filter_time!(data, start_date, end_date)
 end

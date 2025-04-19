@@ -111,10 +111,8 @@ end
 """
 Filter a table by date range
 """
-function filter_time(table, start_date, end_date)
-    table |> TableOperations.filter(
-        x -> Tables.getcolumn(x, :time) >= start_date && Tables.getcolumn(x, :time) <= end_date
-        ) |> Tables.columntable
+function filter_time!(table, start_date, end_date)
+    subset!(table, :time => ByRow(<=(end_date)), :time => ByRow(>=(start_date)))
 end
 
 """
