@@ -34,10 +34,15 @@ weather_data = fetch_data(location, Dates.Day, start_date, end_date)
 
 # Plot line chart including average, minimum and maximum temperature
 
-fig = (data(weather_data)
+fig = (
+    data(weather_data)
     * mapping(:time, [:tavg, :tmin, :tmax], color=dims(1) => renamer(["avg", "min", "max"]) => "Temperatures ")
-    * visual(Lines))
-draw(fig)
+    * visual(Lines)
+)
+draw(fig;
+    figure=(;title="Vancouver, BC"),
+    axis=(;width=600)
+)
 ```
 
 
