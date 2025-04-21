@@ -15,8 +15,8 @@ stations = get_stations();
 
 # Get number of stations in northern hemisphere
 northern = filter_bounds!(copy(stations), (90., -180.), (0., 180.));
-@info "Stations in northern hemisphere: $(nrow(northern))"
+@info "Stations in northern hemisphere: $(length(northern))"
 
 # Get number of stations in southern hemisphere
 southern = filter_bounds!(copy(stations), (0., -180.), (-90., 180.));
-@info "Stations in southern hemisphere:: $(nrow(southern))"
+@info "Stations in southern hemisphere:: $(length(southern))"
