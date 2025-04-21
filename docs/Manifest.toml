@@ -2,7 +2,7 @@
 
 julia_version = "1.11.5"
 manifest_format = "2.0"
-project_hash = "6e4dbb4f28c96cfbc9ac2dfe66c32c95831d5062"
+project_hash = "b5bb8c7df0f294e003d9fd43ec9accb860372a47"
 
 [[deps.ANSIColoredPrinters]]
 git-tree-sha1 = "574baf8110975760d391c710b6341da1afa48d8c"
@@ -314,6 +314,11 @@ deps = ["Indexing", "Random", "Serialization"]
 git-tree-sha1 = "a86af9c4c4f33e16a2b2ff43c2113b2f390081fa"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
 version = "0.4.5"
+
+[[deps.DisplayAs]]
+git-tree-sha1 = "43c017d5dd3a48d56486055973f443f8a39bb6d9"
+uuid = "0b91fe84-8a4c-11e9-3e1d-67c38462b6d6"
+version = "0.1.6"
 
 [[deps.Distances]]
 deps = ["LinearAlgebra", "Statistics", "StatsAPI"]
@@ -998,7 +1003,7 @@ version = "2.28.6+0"
 
 [[deps.Meteostat]]
 deps = ["CSV", "DataFrames", "Dates", "Downloads", "HTTP", "OrderedCollections", "Statistics"]
-git-tree-sha1 = "f00cb3dc732f8e22847e7d6777cc4aae4a646a3c"
+git-tree-sha1 = "1f010f3042c7e290b3b3f472b7810144dd2dc688"
 repo-rev = "main"
 repo-url = ".."
 uuid = "b5f40946-ae6d-44b1-bfb0-547ef2ed8e7e"
