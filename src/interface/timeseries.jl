@@ -45,11 +45,11 @@ function get_schema(::Type{Dates.Month})
 end
 
 """
-    get_weather_data(station::String, granularity::Type{T}
+    fetch_data(station::String, granularity::Type{T}
 
 Reads weather data for a given station
 """
-function get_weather_data(
+function fetch_data(
     station::String, granularity::Type{T}; year::Union{Int,Nothing}=nothing
 ) where {T<:Union{Dates.Period,Nothing}}
     suffix = generate_endpoint_path(station; granularity=granularity, year=year)
@@ -69,7 +69,6 @@ function get_weather_data(
     return df
 end
 
-
 """
     fetch_data(
         station_id::String, start_date::Dates.Date, end_date::Dates.Date, granularity::Type{T},
@@ -82,11 +81,11 @@ function fetch_data(
     granularity::Type{Dates.Hour},
     start_date::Dates.Date,
     end_date::Dates.Date;
-    kwargs...
+    kwargs...,
 )
     dr = start_date:Day(1):end_date
     years = unique(year.(dr))
-    data = vcat((get_weather_data(station_id, granularity; year=year) for year in years)...)
+    data = vcat((fetch_data(station_id, granularity; year=year) for year in years)...)
     return filter_time!(data, start_date, end_date)
 end
 
@@ -99,7 +98,10 @@ end
 Fetches weather data for a given point and requested granularity
 """
 function fetch_data(
-    point::Point, granularity::Type{T}; year::Union{Int,Nothing}=nothing, adjust_temp::Bool=true
+    point::Point,
+    granularity::Type{T};
+    year::Union{Int,Nothing}=nothing,
+    adjust_temp::Bool=true,
 ) where {T<:Dates.Period}
     stations = get_stations(point, granularity)
     # get the nearest
@@ -127,7 +129,7 @@ function fetch_data(
     start_date::Dates.Date,
     end_date::Dates.Date;
     year::Union{Int,Nothing}=nothing,
-    kwargs...
+    kwargs...,
 ) where {T<:Dates.Period}
     data = fetch_data(point, granularity; year=year, kwargs...)
     return filter_time!(data, start_date, end_date)
@@ -145,7 +147,7 @@ function fetch_data(
     granularity::Type{Dates.Hour},
     start_date::Dates.Date,
     end_date::Dates.Date;
-    kwargs...
+    kwargs...,
 )
     dr = start_date:Day(1):end_date
     years = unique(year.(dr))
