@@ -69,6 +69,28 @@ function get_weather_data(
     return df
 end
 
+
+"""
+    fetch_data(
+        station_id::String, start_date::Dates.Date, end_date::Dates.Date, granularity::Type{T},
+        year::Union{Int, Nothing} = nothing) where {T <: Dates.Period}
+
+Fetches hourly weather data for a given date range
+"""
+function fetch_data(
+    station_id::String,
+    granularity::Type{Dates.Hour},
+    start_date::Dates.Date,
+    end_date::Dates.Date;
+    kwargs...
+)
+    dr = start_date:Day(1):end_date
+    years = unique(year.(dr))
+    data = vcat((get_weather_data(station_id, granularity; year=year) for year in years)...)
+    return filter_time!(data, start_date, end_date)
+end
+
+
 """
     fetch_data(point::Point, granularity::Type{T};
         year::Union{Int, Nothing} = nothing,
@@ -103,8 +125,8 @@ function fetch_data(
     point::Point,
     granularity::Type{T},
     start_date::Dates.Date,
-    end_date::Dates.Date,
-    year::Union{Int,Nothing}=nothing;
+    end_date::Dates.Date;
+    year::Union{Int,Nothing}=nothing,
     kwargs...
 ) where {T<:Dates.Period}
     data = fetch_data(point, granularity; year=year, kwargs...)
