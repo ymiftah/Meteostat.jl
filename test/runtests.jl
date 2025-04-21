@@ -3,22 +3,9 @@ using TestItems
 
 using Meteostat
 
-@testitem "Test utilities" begin
+@testitem "Test utilities - Data processing" begin
     using Dates
     using DataFrames: DataFrame
-    
-    year = 2024
-    @test_throws "Hourly granularity requested, but no year was specified." Meteostat.generate_endpoint_path(
-        "foo"; granularity=Dates.Hour
-    )
-    @test Meteostat.generate_endpoint_path("foo"; granularity=Dates.Hour, year=year) ==
-        "hourly/$year/foo.csv.gz"
-    @test Meteostat.generate_endpoint_path("foo"; granularity=Dates.Day) ==
-        "daily/foo.csv.gz"
-    @test Meteostat.generate_endpoint_path("foo"; granularity=Dates.Month) ==
-        "monthly/foo.csv.gz"
-    @test Meteostat.generate_endpoint_path("foo") == "normals/foo.csv.gz"
-
     @test Meteostat.get_distance(130, 48, 120, 35) ≈ 1.3818349744525773e6
 
     @test Meteostat.adjust_temp!(
@@ -38,4 +25,20 @@ using Meteostat
 
     @test Meteostat.degree_mean([35, 36, 37]) == 36
     @test ismissing(Meteostat.degree_mean([missing, missing]))
+end
+
+@testitem "Test utilities - Endpoint paths" begin
+    using Dates
+    year = 2024
+    @test_throws "Hourly granularity requested, but no year was specified." Meteostat.generate_endpoint_path(
+        "foo"; granularity=Dates.Hour
+    )
+    @test Meteostat.generate_endpoint_path("foo"; granularity=Dates.Hour, year=year) ==
+        "hourly/$year/foo.csv.gz"
+    @test Meteostat.generate_endpoint_path("foo"; granularity=Dates.Day) ==
+        "daily/foo.csv.gz"
+    @test Meteostat.generate_endpoint_path("foo"; granularity=Dates.Month) ==
+        "monthly/foo.csv.gz"
+    @test Meteostat.generate_endpoint_path("foo") == "normals/foo.csv.gz"
+
 end
