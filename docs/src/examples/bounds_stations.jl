@@ -9,14 +9,15 @@ The code is licensed under the MIT license.
 """
 
 using Meteostat
+using DataFrames:nrow
 
 # Get all stations
 stations = get_stations();
 
 # Get number of stations in northern hemisphere
 northern = filter_bounds!(copy(stations), (90., -180.), (0., 180.));
-@info "Stations in northern hemisphere: $(length(northern))"
+@info "Stations in northern hemisphere: $(nrow(northern))"
 
 # Get number of stations in southern hemisphere
 southern = filter_bounds!(copy(stations), (0., -180.), (-90., 180.));
-@info "Stations in southern hemisphere:: $(length(southern))"
+@info "Stations in southern hemisphere:: $(nrow(southern))"
