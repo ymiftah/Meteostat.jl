@@ -30,8 +30,7 @@ include("interface/stations.jl")
 include("interface/timeseries.jl")
 
 export Point, get_stations, get_weather_data
-export filter_inventory!
-export filter_nearby!
+export filter_inventory!, filter_nearby!, filter_bounds!, filter_region!
 export fetch_data
 
 

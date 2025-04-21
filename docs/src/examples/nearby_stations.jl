@@ -17,15 +17,13 @@ const MT = Meteostat;
 stations = get_stations();
 
 # read closest stations
-stations = filter_nearby!(stations, 50., 8.; radius=50_000.);
+filter_nearby!(stations, 50., 8.; radius=50_000.);
 @show first(stations, 5)
 
 # Filter stations with hourly data
-stations = filter_inventory!(stations, Dates.Hour);
-@show first(stations, 5)
+filter_inventory!(stations, Dates.Hour);
+@show  first(stations, 5)
 
-# Getthe the closest station with hourly data
+# Get the the closest station with hourly data
 station = first(stations);
-
-# Print name
-print("Closest weather station at coordinates 50, 8:", station["name"])
+@info ("Closest weather station at coordinates 50, 8:", station["name"])

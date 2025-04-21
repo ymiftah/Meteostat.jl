@@ -156,6 +156,7 @@ function filter_inventory!(
     if nrow(stations) == 0
         @warn "No weather stations found with requested granularity"
     end
+    return stations
 end
 
 """
@@ -167,6 +168,7 @@ function filter_inventory!(
     freq = GRANULARITY_MAP[granularity]
     freq_start = Symbol(freq * "_start")
     freq_end = Symbol(freq * "_end")
+    @info freq_end
     dropmissing!(stations, freq_start)
     subset!(stations, freq_start => ByRow(<=(period[1])), freq_end => ByRow(>=(period[2])))
     if nrow(stations) == 0

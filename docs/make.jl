@@ -33,6 +33,8 @@ makedocs(;
         "Examples" => [
             "Query hourly weather data by geo coordinates" => "examples/point_data.md",
             "Query hourly weather data by station" => "examples/point_data_chart.md",
+            "Closest weather station by coordinates" => "examples/nearby_stations.md",
+            "Closest weather station by rectangular boundaries" => "examples/nearby_stations.md",
         ],
     ],
 )
