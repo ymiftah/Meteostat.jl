@@ -1,11 +1,12 @@
 using Test
 using TestItems
 
-using Meteostat: Meteostat
-using Dates: Dates
-using DataFrames: DataFrame
+using Meteostat
 
 @testitem "Test utilities" begin
+    using Dates
+    using DataFrames: DataFrame
+    
     year = 2024
     @test_throws "Hourly granularity requested, but no year was specified." Meteostat.generate_endpoint_path(
         "foo"; granularity=Dates.Hour
@@ -22,7 +23,11 @@ using DataFrames: DataFrame
 
     @test Meteostat.adjust_temp!(
         DataFrame(; temp=[1.0, 2.0, 3.0]), 1000., 0.
-    ) == DataFrame(; temp=[601.0, 602.0, 603.0])
+    ) == DataFrame(; temp=[-5., -4., -3.])
+    @test Meteostat.adjust_temp!(
+        DataFrame(; temp=[1.0, 2.0, 3.0]), nothing, 0.
+    ) == DataFrame(; temp=[1.0, 2.0, 3.0])
+
 
     time_table = DataFrame(;
         time=Dates.Date(2014, 1, 29):Dates.Day(1):Dates.Date(2014, 2, 3)

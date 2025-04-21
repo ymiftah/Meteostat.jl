@@ -78,22 +78,22 @@ function get_distance(lat1, lon1, lat2, lon2)
 end
 
 """
-Adjust temperature-like columns for altitude
+Adjust temperature-like columns for altitude difference between point and station elevation
 """
 function adjust_temp!(table, altitude, elevation)
     # Default temperature difference by 100 meters
     temp_diff = 0.6
 
     if isnothing(altitude)
-        altitude = elevation
+        # No adjustment
+        return table
     end
 
-    # Temperature-like columns
-    temp_like = ("temp", "dwpt", "tavg", "tmin", "tmax")
+    # transform function
     adjust_transform(x) = x + (elevation - altitude) * temp_diff / 100
 
     # Adjust values for all temperature-like data
-    columns = intersect(names(table), temp_like)
+    columns = intersect(names(table), ("temp", "dwpt", "tavg", "tmin", "tmax"))
     if length(columns) > 0
         for col in columns
             transform!(table, col => ByRow(adjust_transform) => col)
