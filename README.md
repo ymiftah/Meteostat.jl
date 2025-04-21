@@ -6,11 +6,16 @@ Among the data sources are national weather services like the National Oceanic a
 
 ## Disclaimer
 
-This project is not affiliated to the [Meteostat organisation](https://meteostat.net/en/about). Do [donate](https://meteostat.net/en/donate) to support the open source project
+This project is not affiliated to the [Meteostat organisation](https://meteostat.net/en/about). Do consider [donating](https://meteostat.net/en/donate) to support the open source project.
 
 ## Installation
 
-The Meteostat Julia package is not yet available on the public registry.
+The Meteostat Julia package is not yet available on the public registry, insall from Github.
+
+```julia
+import Pkg
+Pkg.add("https://github.com/ymiftah/Meteostat")
+```
 
 ## Example
 
