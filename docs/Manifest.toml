@@ -1003,7 +1003,7 @@ version = "2.28.6+0"
 
 [[deps.Meteostat]]
 deps = ["CSV", "DataFrames", "Dates", "Downloads", "HTTP", "OrderedCollections", "Statistics"]
-git-tree-sha1 = "1f010f3042c7e290b3b3f472b7810144dd2dc688"
+git-tree-sha1 = "fde762bdbacf35396e1373ac319a8f7372c91260"
 repo-rev = "main"
 repo-url = ".."
 uuid = "b5f40946-ae6d-44b1-bfb0-547ef2ed8e7e"

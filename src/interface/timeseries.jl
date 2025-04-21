@@ -106,7 +106,7 @@ function fetch_data(
     station = first(stations)
     id, name, distance, elevation = (x -> (x.id, x.name, x.distance, x.elevation))(station)
     @info "Reading data for station $name $id, at distance $distance"
-    data = get_weather_data(id, granularity; year=year)
+    data = fetch_data(id, granularity; year=year)
     if adjust_temp
         @info "adjusting temperature for elevation"
         adjust_temp!(data, point.alt, elevation)
