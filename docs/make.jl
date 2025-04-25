@@ -38,3 +38,7 @@ makedocs(;
         ],
     ],
 )
+
+deploydocs(
+    repo = "github.com/ymiftah/Meteostat.jl.git",
+)
