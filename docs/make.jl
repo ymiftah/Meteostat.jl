@@ -24,9 +24,6 @@ end
 
 makedocs(;
     sitename="Meteostat.jl",
-    # modules = [Meteostat],
-    remotes=nothing,
-    # format = HTML(repolink = "..."),
     authors="Youssef Miftah",
     pages=[
         "Welcome Page" => "index.md",
