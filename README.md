@@ -14,7 +14,7 @@ The Meteostat Julia package is not yet available on the public registry, insall 
 
 ```julia
 import Pkg
-Pkg.add("https://github.com/ymiftah/Meteostat")
+Pkg.add("https://github.com/ymiftah/Meteostat.jl")
 ```
 
 ## Example
