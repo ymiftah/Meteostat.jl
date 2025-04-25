@@ -89,7 +89,6 @@ function fetch_data(
     return filter_time!(data, start_date, end_date)
 end
 
-
 """
     fetch_data(point::Point, granularity::Type{T};
         year::Union{Int, Nothing} = nothing,

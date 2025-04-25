@@ -42,6 +42,6 @@ fig = (
     ) *
     visual(Lines)
 );
-img = DisplayAs.PNG(draw(
-    fig; figure=(; title="Temperature in Brisbane, QLD"), axis=(; width=400)
-))
+img = DisplayAs.PNG(
+    draw(fig; figure=(; title="Temperature in Brisbane, QLD"), axis=(; width=400))
+)

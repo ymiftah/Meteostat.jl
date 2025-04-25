@@ -36,6 +36,4 @@ makedocs(;
     ],
 )
 
-deploydocs(
-    repo = "github.com/ymiftah/Meteostat.jl.git",
-)
+deploydocs(; repo="github.com/ymiftah/Meteostat.jl.git")
