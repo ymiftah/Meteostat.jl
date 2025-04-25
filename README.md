@@ -1,5 +1,8 @@
 # Meteostat Julia Package
 
+
+[![Documentation Build](https://github.com/ymiftah/Meteostat.jl/workflows/Documentation/badge.svg?)](https://ymiftah.github.io/Meteostat.jl/)
+
 The Meteostat Julia library provides a simple API for accessing open weather and climate data. The historical observations and statistics are collected by [Meteostat](https://meteostat.net) from different public interfaces, most of which are governmental.
 
 Among the data sources are national weather services like the National Oceanic and Atmospheric Administration (NOAA) and Germany's national meteorological service (DWD).
