@@ -42,3 +42,8 @@ end
         "monthly/foo.csv.gz"
     @test Meteostat.generate_endpoint_path("foo") == "normals/foo.csv.gz"
 end
+
+@testitem "Aqua.jl" begin
+    using Aqua
+    Aqua.test_all(Meteostat)
+end
