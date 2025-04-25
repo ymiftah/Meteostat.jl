@@ -8,9 +8,12 @@ using Meteostat
     using DataFrames: DataFrame
     @test Meteostat.get_distance(130, 48, 120, 35) ≈ 1.3818349744525773e6
 
+    # should decrease temperatures by 1000 * 0.6 = 6*C
     @test Meteostat.adjust_temp!(
         DataFrame(; temp=[1.0, 2.0, 3.0]), 1000., 0.
     ) == DataFrame(; temp=[-5., -4., -3.])
+
+    # No adjustment if altitude is missing
     @test Meteostat.adjust_temp!(
         DataFrame(; temp=[1.0, 2.0, 3.0]), nothing, 0.
     ) == DataFrame(; temp=[1.0, 2.0, 3.0])
@@ -25,6 +28,7 @@ using Meteostat
 
     @test Meteostat.degree_mean([35, 36, 37]) == 36
     @test ismissing(Meteostat.degree_mean([missing, missing]))
+    @test Meteostat.degree_mean([35, missing])== 35
 end
 
 @testitem "Test utilities - Endpoint paths" begin

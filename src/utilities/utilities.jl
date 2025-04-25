@@ -115,7 +115,7 @@ Return the mean of a list of degrees
 function degree_mean(series)
     all(ismissing, series) && return missing
 
-    rads = deg2rad.(series)
+    rads = deg2rad.(skipmissing(series))
     sums = atan(sum(sin.(rads)), sum(cos.(rads)))
     return (rad2deg(sums) + 360) % 360
 end
