@@ -17,12 +17,12 @@ const MT = Meteostat;
 stations = get_stations();
 
 # read closest stations
-filter_nearby!(stations, 50., 8.; radius=50_000.);
+filter_nearby!(stations, 50.0, 8.0; radius=50_000.0);
 @show first(stations, 5)
 
 # Filter stations with hourly data
 filter_inventory!(stations, Dates.Hour);
-@show  first(stations, 5)
+@show first(stations, 5)
 
 # Get the the closest station with hourly data
 station = first(stations);
