@@ -1,3 +1,0 @@
-# Example
-
-Point data example
