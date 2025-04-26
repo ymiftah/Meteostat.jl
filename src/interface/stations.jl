@@ -1,3 +1,4 @@
+"""Schema of the stations dataframe"""
 const STATIONS_SCHEMA = OrderedDict(
     :id => String,
     :name => String,
@@ -18,6 +19,8 @@ const STATIONS_SCHEMA = OrderedDict(
 )
 
 """
+    get_stations()
+
 Reads all stations
 """
 function get_stations()
@@ -34,6 +37,8 @@ function get_stations()
 end
 
 """
+    get_stations(point::Point; radius::Union{Float64,Nothing}=35_000.0)
+
 Reads all stations within radius distance of the point
 """
 function get_stations(point::Point; radius::Union{Float64,Nothing}=35_000.0)
@@ -42,10 +47,14 @@ function get_stations(point::Point; radius::Union{Float64,Nothing}=35_000.0)
     alt = point.alt
     stations = get_stations()
     filter_nearby!(stations, lat, lon; radius=radius)
-    score_values!(stations; radius=radius, alt=alt)
+    _score_values!(stations; radius=radius, alt=alt)
     return stations
 end
+"""
+    get_stations(lat, lon; radius::Union{Float64,Nothing}=35_000.0)
 
+Reads all stations within radius distance of the point
+"""
 function get_stations(lat, lon; radius::Union{Float64,Nothing}=35_000.0)
     point = Point(; lat=lat, lon=lon)
     stations = get_stations(point; radius=radius)
@@ -53,6 +62,8 @@ function get_stations(lat, lon; radius::Union{Float64,Nothing}=35_000.0)
 end
 
 """
+    get_stations(point::Point, granularity::Type{T}; radius::Union{Float64,Nothing}=35_000.0) where {T<:Dates.Period}
+
 Reads all stations within radius distance of the point and where data is available for the requested granularity
 """
 function get_stations(
@@ -60,12 +71,20 @@ function get_stations(
 ) where {T<:Dates.Period}
     stations = get_stations(point; radius=radius)
     filter_inventory!(stations, granularity)
-    score_values!(stations; radius=radius, alt=point.alt)
+    _score_values!(stations; radius=radius, alt=point.alt)
     return stations
 end
 
 """
-Reads all stations within radius distance of the point and where data is available for the requested granularity and dates
+    get_stations(
+        point::Point,
+        granularity::Type{T},
+        start_date::Dates.Date,
+        end_date::Dates.Date;
+        radius::Union{Float64,Nothing}=35_000.0,
+    )
+
+Reads all stations within radius distance of the point and where data is available for the requested granularity and date range
 """
 function get_stations(
     point::Point,
@@ -76,13 +95,16 @@ function get_stations(
 ) where {T<:Dates.Period}
     stations = get_stations(point; radius=radius)
     filter_inventory!(stations, granularity, (start_date, end_date))
-    score_values!(stations; radius=radius, alt=point.alt)
+    _score_values!(stations; radius=radius, alt=point.alt)
     return stations
 end
 
 # Filters
 
 """
+    filter_nearby!(
+        stations, lat::Float64, lon::Float64; radius::Union{Float64,Nothing}=nothing
+    )
 Sort/filter weather stations by physical distance
 """
 function filter_nearby!(
@@ -106,6 +128,10 @@ function filter_nearby!(
 end
 
 """
+    filter_region!(
+        stations; country::Union{String,Nothing}=nothing, state::Union{String,Nothing}=nothing
+    )
+    
 Filter weather stations by country/region code
 """
 function filter_region!(
@@ -125,6 +151,10 @@ function filter_region!(
 end
 
 """
+    filter_bounds!(
+        stations, top_left::Tuple{Float64,Float64}, bottom_right::Tuple{Float64,Float64}
+    )
+
 Filter weather stations by geographical bounds
 """
 function filter_bounds!(
@@ -146,7 +176,9 @@ function filter_bounds!(
 end
 
 """
-Filter weather stations by inventory data
+    filter_inventory!(stations, granularity::Type{T}) where {T<:Union{Dates.Period,Nothing}}
+
+Filter weather stations by inventory data (pass `nothing` for normals)
 """
 function filter_inventory!(
     stations, granularity::Type{T}
@@ -160,7 +192,11 @@ function filter_inventory!(
 end
 
 """
-Filter weather stations by inventory data between two dates
+    function filter_inventory!(
+        stations, granularity::Type{T}, period::Tuple{Dates.Date,Dates.Date}
+    )
+
+Filter weather stations by inventory data between two dates (pass `nothing` for normals)
 """
 function filter_inventory!(
     stations, granularity::Type{T}, period::Tuple{Dates.Date,Dates.Date}
@@ -178,7 +214,11 @@ function filter_inventory!(
 end
 
 """
-Filter weather stations by inventory data for a given day
+    function filter_inventory!(
+        stations, granularity::Type{T}, date::Dates.Date
+    )
+
+Filter weather stations by inventory data for a given day  (pass `nothing` for normals)
 """
 function filter_inventory!(
     stations, granularity::Type{T}, date::Dates.Date
@@ -195,6 +235,10 @@ function filter_inventory!(
 end
 
 """
+    filter_altitude!(
+        stations; alt::Union{Float64,Nothing}=nothing, alt_range::Float64=350.0
+    )
+
 Filter weather stations by altitude
 """
 function filter_altitude!(
@@ -212,7 +256,7 @@ end
 """
 Score weather stations
 """
-function score_values!(
+function _score_values!(
     stations;
     radius::Float64=35_000.0,
     alt::Union{Float64,Nothing}=nothing,

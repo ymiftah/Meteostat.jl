@@ -2,6 +2,7 @@
 Generate Meteostat Bulk path
 """
 
+"""Maps a Dates.Period to a Meteostat granularity for the bulk API."""
 const GRANULARITY_MAP = Dict(
     Dates.Hour => "hourly",
     Dates.Day => "daily",
@@ -11,11 +12,11 @@ const GRANULARITY_MAP = Dict(
 
 """
     generate_endpoint_path(
-    station::String;
-    granularity::Type{T}=Nothing,
-    year::Union{Int,Nothing}=nothing,
-    map_file::Bool=false,  # Is a source map file?
-)::String where {T<:Union{Dates.Period, Nothing}}
+        station::String;
+        granularity::Type{T}=Nothing,
+        year::Union{Int,Nothing}=nothing,
+        map_file::Bool=false,  # Is a source map file?
+    )::String where {T<:Union{Dates.Period, Nothing}}
 
 Generate the path suffix for the Meteostat API
 """
@@ -41,6 +42,8 @@ function generate_endpoint_path(
 end
 
 """
+    load_handler(endpoint::String, path_suffix::String)
+
 Reads file from local cache, or downloads from a Meteostat endpoint
 """
 function load_handler(endpoint::String, path_suffix::String)
@@ -57,6 +60,8 @@ function load_handler(endpoint::String, path_suffix::String)
 end
 
 """
+    get_distance(lat1, lon1, lat2, lon2)
+
 Calculate distance between weather station and geo point
 """
 function get_distance(lat1, lon1, lat2, lon2)
@@ -78,7 +83,11 @@ function get_distance(lat1, lon1, lat2, lon2)
 end
 
 """
+    adjust_temp!(table, altitude, elevation)
+
 Adjust temperature-like columns for altitude difference between point and station elevation
+
+The transformation is ```temp = temp + (elevation - altitude) * 0.6```
 """
 function adjust_temp!(table, altitude, elevation)
     # Default temperature difference by 100 meters
@@ -103,6 +112,8 @@ function adjust_temp!(table, altitude, elevation)
 end
 
 """
+    filter_time!(table, start_date, end_date)
+
 Filter a table by date range
 """
 function filter_time!(table, start_date, end_date)
@@ -110,6 +121,8 @@ function filter_time!(table, start_date, end_date)
 end
 
 """
+    degree_mean(series)
+
 Return the mean of a list of degrees
 """
 function degree_mean(series)
