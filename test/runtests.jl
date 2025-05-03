@@ -21,7 +21,7 @@ using Meteostat
     )
     @test Meteostat.filter_time!(
         time_table, Dates.Date(2014, 1, 29), Dates.Date(2014, 1, 31)
-    ) == DataFrame(; time=Dates.Date(2014, 1, 29):Dates.Day(1):Dates.Date(2014, 1, 31))
+    ) == DataFrame(; time=Dates.Date(2014, 1, 29):Dates.Day(1):Dates.Date(2014, 1, 30))
 
     @test Meteostat.degree_mean([35, 36, 37]) == 36
     @test ismissing(Meteostat.degree_mean([missing, missing]))
@@ -46,4 +46,37 @@ end
 @testitem "Aqua.jl" begin
     using Aqua
     Aqua.test_all(Meteostat)
+end
+
+@testitem "Test Hourly" begin
+    # Get data for some day at Frankfurt Airport
+    using Dates
+    data = fetch_data("10637", Hour, Date(2018, 1, 1), Date(2018, 1, 2))
+    @test size(data, 1) == 24
+end
+
+@testitem "Test Daily" begin
+    # Get data for some day at Frankfurt Airport
+    using Dates
+    data = fetch_data("10637", Day, Date(2018, 1, 1), Date(2018, 1, 5))
+    @test size(data, 1) == 4
+end
+
+@testitem "Test Monthly" begin
+    # Get data for some day at Frankfurt Airport
+    using Dates
+    data = fetch_data("10637", Month, Date(2018, 1, 1), Date(2018, 9, 1))
+    @test size(data, 1) == 8
+end
+
+@testitem "Test Point" begin
+    using Dates
+    # Create Point for Vancouver, BC
+    point = Point(49.2497, -123.1193, 70.0)
+
+    # Get count of weather stations
+    stations = get_stations(point, Hour, Date(2020, 1, 1), Date(2020, 1, 31))
+
+    # Check if the stations are returned
+    @test size(stations, 1) == 10
 end
