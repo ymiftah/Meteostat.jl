@@ -4,7 +4,9 @@ on:
     branches:
       - main
     tags: ['*']
-  pull_request:
+  pull_request_target:
+    branches:
+      - 'main'
   workflow_dispatch:
 concurrency:
   # Skip intermediate builds: always.

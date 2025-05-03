@@ -1,6 +1,8 @@
 name: Format suggestions
 on:
-  pull_request:
+  pull_request_target:
+    branches:
+      - 'main'
 jobs:
   code-style:
     runs-on: ubuntu-latest
