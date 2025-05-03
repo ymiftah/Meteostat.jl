@@ -13,7 +13,7 @@ This project is not affiliated to the [Meteostat organisation](https://meteostat
 
 ## Installation
 
-The Meteostat Julia package is not yet available on the public registry, insall from Github.
+The Meteostat Julia package is not yet available on the public registry, install from Github.
 
 ```julia
 import Pkg
