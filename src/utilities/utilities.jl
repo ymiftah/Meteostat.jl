@@ -114,10 +114,10 @@ end
 """
     filter_time!(table, start_date, end_date)
 
-Filter a table by date range
+Filter a table by date range (right-exclusive)
 """
 function filter_time!(table, start_date, end_date)
-    return subset!(table, :time => ByRow(<=(end_date)), :time => ByRow(>=(start_date)))
+    return subset!(table, :time => ByRow(<(end_date)), :time => ByRow(>=(start_date)))
 end
 
 """
