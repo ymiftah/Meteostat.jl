@@ -48,39 +48,31 @@ end
     Aqua.test_all(Meteostat)
 end
 
-
 @testitem "Test Hourly" begin
     # Get data for some day at Frankfurt Airport
     using Dates
-    data = fetch_data(
-        "10637", Hour, Date(2018, 1, 1), Date(2018, 1, 2)
-    )
+    data = fetch_data("10637", Hour, Date(2018, 1, 1), Date(2018, 1, 2))
     @test size(data, 1) == 24
 end
-
 
 @testitem "Test Daily" begin
     # Get data for some day at Frankfurt Airport
     using Dates
-    data = fetch_data(
-        "10637", Day, Date(2018, 1, 1), Date(2018, 1, 5)
-    )
+    data = fetch_data("10637", Day, Date(2018, 1, 1), Date(2018, 1, 5))
     @test size(data, 1) == 4
 end
 
 @testitem "Test Monthly" begin
     # Get data for some day at Frankfurt Airport
     using Dates
-    data = fetch_data(
-        "10637", Month, Date(2018, 1, 1), Date(2018, 9, 1)
-    )
+    data = fetch_data("10637", Month, Date(2018, 1, 1), Date(2018, 9, 1))
     @test size(data, 1) == 8
 end
 
 @testitem "Test Point" begin
     using Dates
     # Create Point for Vancouver, BC
-    point = Point(49.2497, -123.1193, 70.)
+    point = Point(49.2497, -123.1193, 70.0)
 
     # Get count of weather stations
     stations = get_stations(point, Hour, Date(2020, 1, 1), Date(2020, 1, 31))

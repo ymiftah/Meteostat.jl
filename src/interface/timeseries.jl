@@ -97,15 +97,11 @@ end
 fetches weather data for a given date range
 """
 function fetch_data(
-    station_id::String,
-    granularity::Type{T},
-    start_date::Dates.Date,
-    end_date::Dates.Date
+    station_id::String, granularity::Type{T}, start_date::Dates.Date, end_date::Dates.Date
 ) where {T<:Dates.Period}
     data = fetch_data(station_id, granularity)
     return filter_time!(data, start_date, end_date)
 end
-
 
 """
     fetch_data(point::Point, granularity::Type{T};
