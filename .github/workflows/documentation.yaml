@@ -6,7 +6,7 @@ on:
     branches:
       - main # update to match your development branch (master, main, dev, trunk, ...)
     tags: '*'
-  pull_request_target:
+  pull_request:
     branches:
       - 'main'
 
