@@ -60,8 +60,8 @@ function fetch_data(
     path = load_handler(endpoint, suffix)
 
     schema = get_schema(granularity)
-    header= keys(schema)
-    types = values(schema) .|> (x->x.first)
+    header = keys(schema)
+    types = (x->x.first).(values(schema))
 
     df = CSV.read(
         path,
@@ -70,7 +70,7 @@ function fetch_data(
         types=collect(types),
         dateformat="yyyy-mm-dd",
     )
-    for (col, unit) in ((key, val.second) for  (key, val) in schema)
+    for (col, unit) in ((key, val.second) for (key, val) in schema)
         if !isnothing(unit)
             unitful(v) = ismissing(v) ? missing : v*unit
             transform!(df, col => ByRow(unitful) => col)
