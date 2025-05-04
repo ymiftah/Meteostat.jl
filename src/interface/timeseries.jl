@@ -1,46 +1,49 @@
+
+import Unitful: °, mm, m, °C, percent, @u_str, hPa, minute
+
 function get_schema(::Type{Dates.Day})
     return OrderedDict(
-        :date => Dates.Date,
-        :tavg => Float64,
-        :tmin => Float64,
-        :tmax => Float64,
-        :prcp => Float64,
-        :snow => Float64,
-        :wdir => Float64,
-        :wspd => Float64,
-        :wpgt => Float64,
-        :pres => Float64,
-        :tsun => Float64,
+        :date => Dates.Date => nothing,
+        :tavg => Float64 => °C,
+        :tmin => Float64 => °C,
+        :tmax => Float64 => °C,
+        :prcp => Float64 => mm,
+        :snow => Float64 => mm,
+        :wdir => Float64 => °,
+        :wspd => Float64 => u"km/h",
+        :wpgt => Float64 => u"km/h",
+        :pres => Float64 => hPa,
+        :tsun => Float64 => minute,
     )
 end
 function get_schema(::Type{Dates.Hour})
     return OrderedDict(
-        :date => Dates.Date,
-        :hour => Int,
-        :temp => Float64,
-        :dwpt => Float64,
-        :rhum => Float64,
-        :prcp => Float64,
-        :snow => Float64,
-        :wdir => Float64,
-        :wspd => Float64,
-        :wpgt => Float64,
-        :pres => Float64,
-        :tsun => Float64,
-        :coco => Float64,
+        :date => Dates.Date => nothing,
+        :hour => Int => nothing,
+        :temp => Float64 => °C,
+        :dwpt => Float64 => °C,
+        :rhum => Float64 => percent,
+        :prcp => Float64 => mm,
+        :snow => Float64 => mm,
+        :wdir => Float64 => °,
+        :wspd => Float64 => u"km/hr",
+        :wpgt => Float64 => u"km/hr",
+        :pres => Float64 => hPa,
+        :tsun => Float64 => minute,
+        :coco => Float64 => nothing,
     )
 end
 function get_schema(::Type{Dates.Month})
     return OrderedDict(
-        :year => Int,
-        :month => Int,
-        :tavg => Float64,
-        :tmin => Float64,
-        :tmax => Float64,
-        :prcp => Float64,
-        :wspd => Float64,
-        :pres => Float64,
-        :tsun => Float64,
+        :year => Int => nothing,
+        :month => Int => nothing,
+        :tavg => Float64 => °C,
+        :tmin => Float64 => °C,
+        :tmax => Float64 => °C,
+        :prcp => Float64 => mm,
+        :wspd => Float64 => u"km/hr",
+        :pres => Float64 => hPa,
+        :tsun => Float64 => minute,
     )
 end
 
@@ -57,14 +60,22 @@ function fetch_data(
     path = load_handler(endpoint, suffix)
 
     schema = get_schema(granularity)
+    header= keys(schema)
+    types = values(schema) .|> (x->x.first)
 
     df = CSV.read(
         path,
         DataFrame;
-        header=collect(keys(schema)),
-        types=collect(values(schema)),
+        header=collect(header),
+        types=collect(types),
         dateformat="yyyy-mm-dd",
     )
+    for (col, unit) in ((key, val.second) for  (key, val) in schema)
+        if !isnothing(unit)
+            unitful(v) = ismissing(v) ? missing : v*unit
+            transform!(df, col => ByRow(unitful) => col)
+        end
+    end
     _add_time_column!(df, granularity)
     return df
 end
