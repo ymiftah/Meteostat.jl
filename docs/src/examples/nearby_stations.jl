@@ -27,3 +27,6 @@ filter_inventory!(stations, Dates.Hour);
 # Get the the closest station with hourly data
 station = first(stations);
 @info ("Closest weather station at coordinates 50, 8:", station["name"])
+
+# Show metadata
+@show get_metadata(stations)

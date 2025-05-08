@@ -1,46 +1,46 @@
 function get_schema(::Type{Dates.Day})
     return OrderedDict(
-        :date => Dates.Date,
-        :tavg => Float64,
-        :tmin => Float64,
-        :tmax => Float64,
-        :prcp => Float64,
-        :snow => Float64,
-        :wdir => Float64,
-        :wspd => Float64,
-        :wpgt => Float64,
-        :pres => Float64,
-        :tsun => Float64,
+        :date => Dates.Date => nothing,
+        :tavg => Float64 => "The daily average air temperature in °C",
+        :tmin => Float64 => "The daily minimum air temperature in °C",
+        :tmax => Float64 => "The daily maximum air temperature in °C",
+        :prcp => Float64 => "The daily precipitation total in mm",
+        :snow => Float64 => "The snow depth in mm",
+        :wdir => Float64 => "The average wind direction in degrees (°)",
+        :wspd => Float64 => "The average wind speed in km/h",
+        :wpgt => Float64 => "The peak wind gust in km/h",
+        :pres => Float64 => "The average sea-level air pressure in hPa",
+        :tsun => Float64 => "The daily sunshine total in minutes (m)",
     )
 end
 function get_schema(::Type{Dates.Hour})
     return OrderedDict(
-        :date => Dates.Date,
-        :hour => Int,
-        :temp => Float64,
-        :dwpt => Float64,
-        :rhum => Float64,
-        :prcp => Float64,
-        :snow => Float64,
-        :wdir => Float64,
-        :wspd => Float64,
-        :wpgt => Float64,
-        :pres => Float64,
-        :tsun => Float64,
-        :coco => Float64,
+        :date => Dates.Date => nothing,
+        :hour => Int => nothing,
+        :temp => Float64 => "The average air temperature in °C",
+        :dwpt => Float64 => "The dewpoint temperature in °C",
+        :rhum => Float64 => "The relative humidity in percent (%)",
+        :prcp => Float64 => "The one hour precipitation total in mm",
+        :snow => Float64 => "The snow depth in mm",
+        :wdir => Float64 => "The average wind direction in degrees (°)",
+        :wspd => Float64 => "The average wind speed in km/h",
+        :wpgt => Float64 => "The peak wind gust in km/h",
+        :pres => Float64 => "The average sea-level air pressure in hPa",
+        :tsun => Float64 => "The one hour sunshine total in minutes (m)",
+        :coco => Float64 => "The weather condition code",
     )
 end
 function get_schema(::Type{Dates.Month})
     return OrderedDict(
-        :year => Int,
-        :month => Int,
-        :tavg => Float64,
-        :tmin => Float64,
-        :tmax => Float64,
-        :prcp => Float64,
-        :wspd => Float64,
-        :pres => Float64,
-        :tsun => Float64,
+        :year => Int => nothing,
+        :month => Int => nothing,
+        :tavg => Float64 => "The monthly average air temperature in °C",
+        :tmin => Float64 => "The monthly minimum air temperature in °C",
+        :tmax => Float64 => "The monthly maximum air temperature in °C",
+        :prcp => Float64 => "The monthly precipitation total in mm",
+        :wspd => Float64 => "The average wind speed in km/h",
+        :pres => Float64 => "The average sea-level air pressure in hPa",
+        :tsun => Float64 => "The monthly sunshine total in minutes (m)",
     )
 end
 
@@ -62,9 +62,15 @@ function fetch_data(
         path,
         DataFrame;
         header=collect(keys(schema)),
-        types=collect(values(schema)),
+        types=collect((x -> x.first).(values(schema))),
         dateformat="yyyy-mm-dd",
     )
+    for (col, values) in schema
+        metadata = values.second
+        if !isnothing(metadata)
+            colmetadata!(df, col, "label", metadata; style=:note);
+        end
+    end
     _add_time_column!(df, granularity)
     return df
 end

@@ -23,3 +23,6 @@ data = fetch_data(point, Dates.Hour, start_date, end_date);
 
 # Print to console
 @show first(data, 5)
+
+# Show metadata
+@show get_metadata(data)
