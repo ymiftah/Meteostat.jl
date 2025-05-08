@@ -25,4 +25,4 @@ data = fetch_data(point, Dates.Hour, start_date, end_date);
 @show first(data, 5)
 
 # Show metadata
-@show get_metadata(data)
+get_metadata(data)

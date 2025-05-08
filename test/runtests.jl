@@ -48,6 +48,12 @@ end
     Aqua.test_all(Meteostat)
 end
 
+@testitem "Test stations" begin
+    # Get data for some day at Frankfurt Airport
+    stations = get_stations();
+    @test size(stations, 1) > 0
+end
+
 @testitem "Test Hourly" begin
     # Get data for some day at Frankfurt Airport
     using Dates

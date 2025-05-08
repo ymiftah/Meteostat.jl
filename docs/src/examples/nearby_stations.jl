@@ -29,4 +29,4 @@ station = first(stations);
 @info ("Closest weather station at coordinates 50, 8:", station["name"])
 
 # Show metadata
-@show get_metadata(stations)
+get_metadata(stations)
