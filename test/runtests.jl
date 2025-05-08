@@ -90,5 +90,4 @@ end
     # Check if the stations are returned
     @test size(stations, 1) == 10
     get_metadata(stations)
-
 end
