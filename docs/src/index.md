@@ -16,8 +16,6 @@ import Pkg
 Pkg.add("Meteostat")
 ```
 
-
-
 ## Example
 
 Let's plot 2018 temperature data for Vancouver, BC:
