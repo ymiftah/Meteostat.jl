@@ -14,6 +14,10 @@ struct Point{T<:Real}
     lat::T
     lon::T
     alt::Union{T,Nothing}
+
+    function Point(lat::T, lon::T, alt::Union{T,Nothing}) where {T<:Real}
+        return new{T}(lat, lon, isnothing(alt) ? nothing : alt)
+    end
 end
 
 Point(lat::Real, lon::Real) = Point(lat, lon, nothing)

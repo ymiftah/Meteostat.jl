@@ -19,6 +19,8 @@ using DataFrames
 using OrderedCollections: OrderedDict
 using CSV: CSV
 import Statistics: mean
+import Unitful: °, mm, m, °C, percent, @u_str, hPa, minute
+
 
 const CACHE_PATH = joinpath(tempdir(), ".meteostat", "cache")
 

@@ -33,6 +33,8 @@ function get_stations()
         types=collect(values(STATIONS_SCHEMA)),
         dateformat="yyyy-mm-dd",
     )
+    unitful(v) = ismissing(v) ? missing : v*u"m"
+    transform!(df, :elevation => ByRow(unitful) => :elevation)
     return df
 end
 

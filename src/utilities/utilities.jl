@@ -91,7 +91,7 @@ The transformation is ```temp = temp + (elevation - altitude) * 0.6```
 """
 function adjust_temp!(table, altitude, elevation)
     # Default temperature difference by 100 meters
-    temp_diff = 0.6
+    temp_diff = 0.6u"°C"
 
     if isnothing(altitude)
         # No adjustment
