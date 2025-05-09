@@ -1,7 +1,7 @@
 name = "Meteostat"
 uuid = "b5f40946-ae6d-44b1-bfb0-547ef2ed8e7e"
 authors = ["Youssef Miftah <miftahyo@outlook.fr>"]
-version = "0.1.0"
+version = "0.2.1"
 
 [deps]
 CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
