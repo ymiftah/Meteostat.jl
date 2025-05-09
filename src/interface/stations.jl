@@ -37,7 +37,7 @@ function get_stations()
     for (col, values) in STATIONS_SCHEMA
         metadata = values.second
         if !isnothing(metadata)
-            colmetadata!(df, col, "label", metadata; style=:note);
+            colmetadata!(df, col, "label", metadata; style=:note)
         end
     end
     return df

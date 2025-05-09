@@ -50,7 +50,7 @@ end
 
 @testitem "Test stations" begin
     # Get data for some day at Frankfurt Airport
-    stations = get_stations();
+    stations = get_stations()
     @test size(stations, 1) > 0
     get_metadata(stations)
 end

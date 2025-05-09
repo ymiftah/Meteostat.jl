@@ -68,7 +68,7 @@ function fetch_data(
     for (col, values) in schema
         metadata = values.second
         if !isnothing(metadata)
-            colmetadata!(df, col, "label", metadata; style=:note);
+            colmetadata!(df, col, "label", metadata; style=:note)
         end
     end
     _add_time_column!(df, granularity)
