@@ -33,7 +33,7 @@ weather_data = fetch_data(station_id, Dates.Hour, start_date, end_date);
 @show first(weather_data, 5)
 
 # Show metadata
-get_metadata(data)
+get_metadata(weather_data)
 
 # draw figure
 fig = (
