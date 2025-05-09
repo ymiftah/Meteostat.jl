@@ -9,7 +9,7 @@ The code is licensed under the MIT license.
 """
 
 using Dates;
-using Meteostat: Point, fetch_data;
+using Meteostat: Point, fetch_data, get_metadata;
 
 # Time period
 start_date = Date(2021, 1, 1);
