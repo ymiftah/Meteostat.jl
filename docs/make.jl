@@ -1,7 +1,6 @@
 using Documenter, Meteostat, Literate
 
-# This code performs the automated addition of Literate - Generated Markdowns. The desired
-# section name should be the name of the file for instance network_matrices.jl -> Network Matrices
+# This code performs the automated addition of Literate - Generated Markdowns.
 julia_file_filter = x -> occursin(".jl", x)
 outputdir = joinpath(pwd(), "docs", "src", "examples")
 files = filter(julia_file_filter, readdir(outputdir))

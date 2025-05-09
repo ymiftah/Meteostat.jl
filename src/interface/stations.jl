@@ -1,21 +1,22 @@
 """Schema of the stations dataframe"""
 const STATIONS_SCHEMA = OrderedDict(
-    :id => String,
-    :name => String,
-    :country => String,
-    :region => String,
-    :wmo => String,
-    :icao => String,
-    :latitude => Float64,
-    :longitude => Float64,
-    :elevation => Float64,
-    :timezone => String,
-    :hourly_start => Dates.Date,
-    :hourly_end => Dates.Date,
-    :daily_start => Dates.Date,
-    :daily_end => Dates.Date,
-    :monthly_start => Dates.Date,
-    :monthly_end => Dates.Date,
+    :id => String => "The Meteostat ID of the weather station",
+    :name => String => "The English name of the weather station",
+    :country => String => "The ISO 3166-1 alpha-2 country code of the weather station",
+    :region => String => "The ISO 3166-2 state or region code of the weather station",
+    :wmo => String => "The WMO ID of the weather station",
+    :icao => String => "The ICAO ID of the weather station",
+    :latitude => Float64 => "The latitude of the weather station in degrees",
+    :longitude => Float64 => "The longitude of the weather station in degrees",
+    :elevation =>
+        Float64 => "The elevation of the weather station in meters above sea level",
+    :timezone => String => "The time zone of the weather station",
+    :hourly_start => Dates.Date => "The first day on record for hourly data",
+    :hourly_end => Dates.Date => "The last day on record for hourly data",
+    :daily_start => Dates.Date => "The first day on record for daily data",
+    :daily_end => Dates.Date => "The last day on record for daily data",
+    :monthly_start => Dates.Date => "The first day on record for monthly data",
+    :monthly_end => Dates.Date => "The last day on record for monthly data",
 )
 
 """
@@ -30,9 +31,15 @@ function get_stations()
         path,
         DataFrame;
         header=collect(keys(STATIONS_SCHEMA)),
-        types=collect(values(STATIONS_SCHEMA)),
+        types=collect((x -> x.first).(values(STATIONS_SCHEMA))),
         dateformat="yyyy-mm-dd",
     )
+    for (col, values) in STATIONS_SCHEMA
+        metadata = values.second
+        if !isnothing(metadata)
+            colmetadata!(df, col, "label", metadata; style=:note)
+        end
+    end
     return df
 end
 
