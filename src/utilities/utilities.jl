@@ -157,3 +157,10 @@ function _add_time_column!(table, ::Type{Dates.Month})
     select!(table, :time, Not(:time))
     return table
 end
+
+function get_metadata(df::DataFrame)
+    return [
+        only(names(df, col)) => colmetadata(df, col, "label") for
+        (col, _) in colmetadatakeys(df)
+    ]
+end

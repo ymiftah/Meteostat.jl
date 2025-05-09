@@ -48,11 +48,19 @@ end
     Aqua.test_all(Meteostat)
 end
 
+@testitem "Test stations" begin
+    # Get data for some day at Frankfurt Airport
+    stations = get_stations()
+    @test size(stations, 1) > 0
+    get_metadata(stations)
+end
+
 @testitem "Test Hourly" begin
     # Get data for some day at Frankfurt Airport
     using Dates
     data = fetch_data("10637", Hour, Date(2018, 1, 1), Date(2018, 1, 2))
     @test size(data, 1) == 24
+    get_metadata(data)
 end
 
 @testitem "Test Daily" begin
@@ -60,6 +68,7 @@ end
     using Dates
     data = fetch_data("10637", Day, Date(2018, 1, 1), Date(2018, 1, 5))
     @test size(data, 1) == 4
+    get_metadata(data)
 end
 
 @testitem "Test Monthly" begin
@@ -67,6 +76,7 @@ end
     using Dates
     data = fetch_data("10637", Month, Date(2018, 1, 1), Date(2018, 9, 1))
     @test size(data, 1) == 8
+    get_metadata(data)
 end
 
 @testitem "Test Point" begin
@@ -79,4 +89,5 @@ end
 
     # Check if the stations are returned
     @test size(stations, 1) == 10
+    get_metadata(stations)
 end

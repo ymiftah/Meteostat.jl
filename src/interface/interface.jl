@@ -10,6 +10,12 @@
     # threads:: Int = 1
 end
 
+"""
+    Point(lat::Real, lon::Real, alt::Union{T,Nothing})
+
+    Point at the given latitude, longitude and altitude (meters). If altitude is not provided, no adjustment is made
+    to the weather data.
+"""
 struct Point{T<:Real}
     lat::T
     lon::T

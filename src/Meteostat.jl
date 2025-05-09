@@ -33,5 +33,6 @@ include("interface/timeseries.jl")
 
 export Point, get_stations, fetch_data
 export filter_inventory!, filter_nearby!, filter_bounds!, filter_region!
+export get_metadata
 
 end # module Meteostat

@@ -1,47 +1,47 @@
 
 function get_schema(::Type{Dates.Day})
     return OrderedDict(
-        :date => Dates.Date => nothing,
-        :tavg => Float64 => °C,
-        :tmin => Float64 => °C,
-        :tmax => Float64 => °C,
-        :prcp => Float64 => mm,
-        :snow => Float64 => mm,
-        :wdir => Float64 => °,
-        :wspd => Float64 => u"km/h",
-        :wpgt => Float64 => u"km/h",
-        :pres => Float64 => hPa,
-        :tsun => Float64 => minute,
+        :date => (Dates.Date, nothing, nothing),
+        :tavg => (Float64, °C, "The daily average air temperature in °C"),
+        :tmin => (Float64, °C, "The daily minimum air temperature in °C"),
+        :tmax => (Float64, °C, "The daily maximum air temperature in °C"),
+        :prcp => (Float64, mm, "The daily precipitation total in mm"),
+        :snow => (Float64, mm, "The snow depth in mm"),
+        :wdir => (Float64, °, "The average wind direction in degrees (°)"),
+        :wspd => (Float64, u"km/h", "The average wind speed in km/h"),
+        :wpgt => (Float64, u"km/h", "The peak wind gust in km/h"),
+        :pres => (Float64, hPa, "The average sea-level air pressure in hPa"),
+        :tsun => (Float64, minute, "The daily sunshine total in minutes (m)"),
     )
 end
 function get_schema(::Type{Dates.Hour})
     return OrderedDict(
-        :date => Dates.Date => nothing,
-        :hour => Int => nothing,
-        :temp => Float64 => °C,
-        :dwpt => Float64 => °C,
-        :rhum => Float64 => percent,
-        :prcp => Float64 => mm,
-        :snow => Float64 => mm,
-        :wdir => Float64 => °,
-        :wspd => Float64 => u"km/hr",
-        :wpgt => Float64 => u"km/hr",
-        :pres => Float64 => hPa,
-        :tsun => Float64 => minute,
-        :coco => Float64 => nothing,
+        :date => (Dates.Date, nothing, nothing),
+        :hour => (Int, nothing, nothing),
+        :temp => (Float64, °C, "The average air temperature in °C"),
+        :dwpt => (Float64, °C, "The dewpoint temperature in °C"),
+        :rhum => (Float64, percent, "The relative humidity in percent (%)"),
+        :prcp => (Float64, mm, "The one hour precipitation total in mm"),
+        :snow => (Float64, mm, "The snow depth in mm"),
+        :wdir => (Float64, °, "The average wind direction in degrees (°)"),
+        :wspd => (Float64, u"km/hr", "The average wind speed in km/h"),
+        :wpgt => (Float64, u"km/hr", "The peak wind gust in km/h"),
+        :pres => (Float64, hPa, "The average sea-level air pressure in hPa"),
+        :tsun => (Float64, minute, "The one hour sunshine total in minutes (m)"),
+        :coco => (Float64, nothing, "The weather condition code"),
     )
 end
 function get_schema(::Type{Dates.Month})
     return OrderedDict(
-        :year => Int => nothing,
-        :month => Int => nothing,
-        :tavg => Float64 => °C,
-        :tmin => Float64 => °C,
-        :tmax => Float64 => °C,
-        :prcp => Float64 => mm,
-        :wspd => Float64 => u"km/hr",
-        :pres => Float64 => hPa,
-        :tsun => Float64 => minute,
+        :year => (Int, nothing, nothing),
+        :month => (Int, nothing, nothing),
+        :tavg => (Float64, °C, "The monthly average air temperature in °C"),
+        :tmin => (Float64, °C, "The monthly minimum air temperature in °C"),
+        :tmax => (Float64, °C, "The monthly maximum air temperature in °C"),
+        :prcp => (Float64, mm, "The monthly precipitation total in mm"),
+        :wspd => (Float64, u"km/hr", "The average wind speed in km/h"),
+        :pres => (Float64, hPa, "The average sea-level air pressure in hPa"),
+        :tsun => (Float64, minute, "The monthly sunshine total in minutes (m)"),
     )
 end
 
@@ -59,7 +59,7 @@ function fetch_data(
 
     schema = get_schema(granularity)
     header = keys(schema)
-    types = (x->x.first).(values(schema))
+    types = (x -> x[1]).(values(schema))
 
     df = CSV.read(
         path,
@@ -68,10 +68,16 @@ function fetch_data(
         types=collect(types),
         dateformat="yyyy-mm-dd",
     )
-    for (col, unit) in ((key, val.second) for (key, val) in schema)
+    for (col, unit) in ((key, val[2]) for (key, val) in schema)
         if !isnothing(unit)
-            unitful(v) = ismissing(v) ? missing : v*unit
+            unitful(v) = ismissing(v) ? missing : v * unit
             transform!(df, col => ByRow(unitful) => col)
+        end
+    end
+    for (col, values) in schema
+        label = values[3]
+        if !isnothing(metadata)
+            colmetadata!(df, col, "label", label; style=:note)
         end
     end
     _add_time_column!(df, granularity)
